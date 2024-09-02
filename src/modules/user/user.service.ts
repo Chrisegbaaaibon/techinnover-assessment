@@ -86,7 +86,16 @@ export class UserService {
     };
   }
 
-  async getProducts(userId: string): Promise<IServiceResponse> {
+  async getProducts (): Promise<IServiceResponse> {
+    const products = await this.productModel.find();
+    return {
+      data: {
+        products,
+      },
+    };
+  }
+
+  async getUserProducts(userId: string): Promise<IServiceResponse> {
     const user = await this.userModel.findById(userId).populate('products');
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -154,7 +163,10 @@ export class UserService {
   }
 
   async deleteProduct(body: IdDto, userId: string): Promise<IServiceResponse> {
-    const product = await this.productModel.findById(body.id);
+    const [product, user] = await Promise.all([
+      this.productModel.findById(body.id),
+      this.userModel.findById(userId),
+    ])
     if (!product) {
       throw new UnauthorizedException('Product not found');
     }
@@ -163,7 +175,10 @@ export class UserService {
         'You are not authorized to delete this product',
       );
     }
-    await product.deleteOne();
+    user.products = user.products.filter((id) => id !== product.id);
+
+    await Promise.all([product.deleteOne(), user.save()]);
+
     return {
       data: {
         message: 'Product deleted successfully',
@@ -173,11 +188,15 @@ export class UserService {
 
   async approveProduct(
     userId: string,
+    role: string,
     productId: string,
   ): Promise<IServiceResponse> {
     const user = await this.userModel.findById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
+    }
+    if(role !== RolesEnum.ADMIN) {
+      throw new UnauthorizedException('You are not authorized to access this resource');
     }
     const product = await this.productModel.findById(productId);
     if (!product) {
