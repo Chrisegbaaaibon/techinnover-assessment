@@ -104,5 +104,5 @@ src/
 This project is licensed under the MIT License.
 
 ## Contact
-Christopher Egbaaibon - your.email@example.com  
-Project Link: https://github.com/your-username/e-commerce-api
+Christopher Egbaaibon - christopher@gmail.com  
+Project Link: https://github.com/Chrisegbaaaibon/techinnover-assessment
