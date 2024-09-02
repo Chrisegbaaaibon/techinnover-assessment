@@ -104,5 +104,5 @@ src/
 This project is licensed under the MIT License.
 
 ## Contact
-Christopher Egbaaibon - christopher@gmail.com  
+Christopher Egbaaibon - christopheregbaaibon@gmail.com  
 Project Link: https://github.com/Chrisegbaaaibon/techinnover-assessment
