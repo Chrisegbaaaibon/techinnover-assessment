@@ -1,10 +1,26 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { 
+  Controller, 
+  Get, 
+  Post, 
+  Body, 
+  Param, 
+  Delete, 
+  Put, 
+  UseGuards 
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateProductDto, UpdateProductDto, IdDto } from 'src/common/dtos/product.dto';
+import { 
+  CreateProductDto, 
+  UpdateProductDto, 
+  IdDto 
+} from 'src/common/dtos/product.dto';
 import { IServiceResponse } from 'src/common/interfaces/http-response.interface';
 import { AuthGuard } from 'src/common/guards/auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { GetCurrentUserId, GetCurrentUserRole } from 'src/common/decorators/get-current-user.decorator';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { 
+  GetCurrentUserId, 
+  GetCurrentUserRole 
+} from 'src/common/decorators/get-current-user.decorator';
 import { 
   CreateProductResponseDto, 
   GetProductsResponseDto, 
@@ -12,17 +28,21 @@ import {
   GetUserResponseDto, 
   GetProfileResponseDto,
   MessageResponseDto,
-  ProductDto
+  ProductDto 
 } from 'src/common/dtos/response.dto';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('product')
   @ApiOperation({ summary: 'Create a new product' })
-  @ApiResponse({ status: 201, description: 'Product created successfully', type: CreateProductResponseDto })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Product created successfully', 
+    type: CreateProductResponseDto 
+  })
   @UseGuards(AuthGuard)
   async createProduct(
     @GetCurrentUserId() userId: string,
@@ -33,58 +53,95 @@ export class UserController {
 
   @Get('products')
   @ApiOperation({ summary: 'Get all products for the current user' })
-  @ApiResponse({ status: 200, description: 'Retrieved products successfully', type: GetProductsResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retrieved products successfully', 
+    type: GetProductsResponseDto 
+  })
   @UseGuards(AuthGuard)
-  async getProducts(@GetCurrentUserId() userId: string): Promise<IServiceResponse<GetProductsResponseDto>> {
+  async getProducts(
+    @GetCurrentUserId() userId: string
+  ): Promise<IServiceResponse<GetProductsResponseDto>> {
     return this.userService.getProducts(userId);
   }
 
   @Put('product')
   @ApiOperation({ summary: 'Update a product' })
-  @ApiResponse({ status: 200, description: 'Product updated successfully', type: ProductDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Product updated successfully', 
+    type: ProductDto 
+  })
   @UseGuards(AuthGuard)
   async updateProduct(
     @GetCurrentUserId() userId: string,
     @Body() body: UpdateProductDto,
-  ): Promise<IServiceResponse<{ product: ProductDto, message: string }>> {
+  ): Promise<IServiceResponse<{ product: ProductDto; message: string }>> {
     return this.userService.updateProduct(userId, body);
   }
 
   @Delete('product')
   @ApiOperation({ summary: 'Delete a product' })
-  @ApiResponse({ status: 200, description: 'Product deleted successfully', type: MessageResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Product deleted successfully', 
+    type: MessageResponseDto 
+  })
   @UseGuards(AuthGuard)
-  async deleteProduct(@GetCurrentUserId() userId: string, @Body() body: IdDto): Promise<IServiceResponse<MessageResponseDto>> {
+  async deleteProduct(
+    @GetCurrentUserId() userId: string, 
+    @Body() body: IdDto
+  ): Promise<IServiceResponse<MessageResponseDto>> {
     return this.userService.deleteProduct(body, userId);
   }
 
   @Get('profile')
   @ApiOperation({ summary: 'Get user profile' })
-  @ApiResponse({ status: 200, description: 'Retrieved user profile successfully', type: GetProfileResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retrieved user profile successfully', 
+    type: GetProfileResponseDto 
+  })
   @UseGuards(AuthGuard)
-  async getProfile(@GetCurrentUserId() userId: string): Promise<IServiceResponse<GetProfileResponseDto>> {
+  async getProfile(
+    @GetCurrentUserId() userId: string
+  ): Promise<IServiceResponse<GetProfileResponseDto>> {
     return this.userService.getProfile(userId);
   }
 
   @Get('users')
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Retrieved users successfully', type: GetUsersResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retrieved users successfully', 
+    type: GetUsersResponseDto 
+  })
   @UseGuards(AuthGuard)
-  async getUsers(): Promise<IServiceResponse> {
+  async getUsers(): Promise<IServiceResponse<GetUsersResponseDto>> {
     return this.userService.getUsers();
   }
 
   @Get('user')
   @ApiOperation({ summary: 'Get a user' })
-  @ApiResponse({ status: 200, description: 'Retrieved user successfully', type: GetUserResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retrieved user successfully', 
+    type: GetUserResponseDto 
+  })
   @UseGuards(AuthGuard)
-  async getUser(@Body() body: IdDto): Promise<IServiceResponse<GetUserResponseDto>> {
+  async getUser(
+    @Body() body: IdDto
+  ): Promise<IServiceResponse<GetUserResponseDto>> {
     return this.userService.getUser(body);
   }
 
   @Post('approve-product')
   @ApiOperation({ summary: 'Approve a product' })
-  @ApiResponse({ status: 200, description: 'Product approved successfully', type: ProductDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Product approved successfully', 
+    type: ProductDto 
+  })
   @UseGuards(AuthGuard)
   async approveProduct(
     @GetCurrentUserId() userId: string,
@@ -95,21 +152,35 @@ export class UserController {
 
   @Get('public-products')
   @ApiOperation({ summary: 'Get all public products' })
-  @ApiResponse({ status: 200, description: 'Retrieved public products successfully', type: GetProductsResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retrieved public products successfully', 
+    type: GetProductsResponseDto 
+  })
   async getPublicProducts(): Promise<IServiceResponse<GetProductsResponseDto>> {
     return this.userService.getPublicProducts();
   }
 
   @Get('product/:id')
   @ApiOperation({ summary: 'Get a specific product' })
-  @ApiResponse({ status: 200, description: 'Retrieved product successfully', type: ProductDto })
-  async getProduct(@Param('id') productId: string): Promise<IServiceResponse<{ product: ProductDto }>> {
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Retrieved product successfully', 
+    type: ProductDto 
+  })
+  async getProduct(
+    @Param('id') productId: string
+  ): Promise<IServiceResponse<{ product: ProductDto }>> {
     return this.userService.getProduct(productId);
   }
 
   @Post('ban-user')
   @ApiOperation({ summary: 'Ban a user' })
-  @ApiResponse({ status: 200, description: 'User banned successfully', type: MessageResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User banned successfully', 
+    type: MessageResponseDto 
+  })
   @UseGuards(AuthGuard)
   async banUser(
     @Body() body: IdDto,
@@ -120,7 +191,11 @@ export class UserController {
 
   @Post('unban-user')
   @ApiOperation({ summary: 'Unban a user' })
-  @ApiResponse({ status: 200, description: 'User unbanned successfully', type: MessageResponseDto })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User unbanned successfully', 
+    type: MessageResponseDto 
+  })
   @UseGuards(AuthGuard)
   async unbanUser(
     @Body() body: IdDto,

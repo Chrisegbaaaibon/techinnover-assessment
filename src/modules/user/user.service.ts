@@ -1,7 +1,6 @@
 import {
   Injectable,
   UnauthorizedException,
-  BadRequestException,
 } from '@nestjs/common';
 import { User } from 'src/models/user.model';
 import { Product } from 'src/models/product.model';
@@ -22,6 +21,48 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
+
+  async getUsers(): Promise<IServiceResponse> {
+    const users = await this.userModel.find();
+    return {
+      data: {
+        users,
+      },
+    };
+  }
+
+  async getUser(body: IdDto): Promise<IServiceResponse> {
+    const user = await this.userModel.findById(body.id).populate({
+      path: 'products',
+      model: 'Product',
+      match: { isApproved: true },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return {
+      data: {
+        user,
+      },
+    };
+  }
+
+  async getProfile(id: string): Promise<IServiceResponse> {
+    const user = await this.userModel.findById(id).populate({
+      path: 'products',
+      model: 'Product',
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return {
+      data: {
+        role: user.role,
+        id: user.id,
+      },
+    };
+  }
 
   async createProduct(
     userId: string,
@@ -57,31 +98,27 @@ export class UserService {
     };
   }
 
-  async getUsers() {
-    //pagination but it's not neccessary
-    const users = await this.userModel.find();
+  async getPublicProducts(): Promise<IServiceResponse> {
+    const products = await this.productModel
+      .find({ isApproved: true })
+      .select('-user');
     return {
       data: {
-        users,
+        products,
       },
     };
   }
 
-  async getUser(body: IdDto): Promise<IServiceResponse> {
-      const user = await this.userModel.findById(body.id).populate({
-         path: 'products',
-         model: 'Product',
-         match: { isApproved: true },
-      });
-      if (!user) {
-         throw new UnauthorizedException('User not found');
-      }
-      return {
-         data: {
-         user,
+  async getProduct(productId: string): Promise<IServiceResponse> {
+    const product = await this.productModel.findById(productId).select('-user');
+    if (!product) {
+      throw new UnauthorizedException('Product not found');
+    }
+    return {
+      data: {
+        product,
       },
-      };
-
+    };
   }
 
   async updateProduct(
@@ -116,6 +153,24 @@ export class UserService {
     };
   }
 
+  async deleteProduct(body: IdDto, userId: string): Promise<IServiceResponse> {
+    const product = await this.productModel.findById(body.id);
+    if (!product) {
+      throw new UnauthorizedException('Product not found');
+    }
+    if (product.user.id !== userId) {
+      throw new UnauthorizedException(
+        'You are not authorized to delete this product',
+      );
+    }
+    await product.deleteOne();
+    return {
+      data: {
+        message: 'Product deleted successfully',
+      },
+    };
+  }
+
   async approveProduct(
     userId: string,
     productId: string,
@@ -130,46 +185,6 @@ export class UserService {
     }
     product.isApproved = true;
     await product.save();
-    return {
-      data: {
-        product,
-      },
-    };
-  }
-
-  async getProfile(id: string ): Promise<IServiceResponse> {
-    const user = await this.userModel.findById(id).populate({
-      path: 'products',
-      model: 'Product',
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-    return {
-      data: {
-        role: user.role,
-        id: user.id,
-      },
-    };
-  }
-
-  async getPublicProducts(): Promise<IServiceResponse> {
-    const products = await this.productModel
-      .find({ isApproved: true })
-      .select('-user');
-    return {
-      data: {
-        products,
-      },
-    };
-  }
-
-  async getProduct(productId: string): Promise<IServiceResponse> {
-    const product = await this.productModel.findById(productId).select('-user');
-    if (!product) {
-      throw new UnauthorizedException('Product not found');
-    }
     return {
       data: {
         product,
@@ -198,23 +213,6 @@ export class UserService {
     };
   }
 
-  async deleteProduct(body: IdDto, userId: string): Promise<IServiceResponse> {
-    const product = await this.productModel.findById(body.id);
-    if (!product) {
-      throw new UnauthorizedException('Product not found');
-    }
-    if (product.user.id !== userId) {
-      throw new UnauthorizedException(
-        'You are not authorized to delete this product',
-      );
-    }
-    await product.deleteOne();
-    return {
-      data: {
-        message: 'Product deleted successfully',
-      },
-    };
-  }
   async unbanUser(body: IdDto, role: string): Promise<IServiceResponse> {
     if (role !== RolesEnum.ADMIN) {
       throw new UnauthorizedException(

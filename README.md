@@ -1,73 +1,108 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+I'll generate a README file based on the provided project structure. Here's the content:
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+---
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# E-commerce System API
 
-## Description
+## Project Overview
+This project is a backend API for a basic e-commerce system built with NestJS. It provides functionalities for user authentication, product management, and additional utilities.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Key Features
+- User authentication (registration and login)
+- Product management (CRUD operations)
+- API documentation with Swagger
 
-## Installation
+## Technologies Used
+- NestJS
+- TypeScript
+- Passport.js for authentication
+- JWT for token-based authentication
+- Class-validator and class-transformer for DTO validation
+- Swagger for API documentation
 
-```bash
-$ yarn install
+## Prerequisites
+Before you begin, ensure you have met the following requirements:
+- Node.js (v20 or later)
+- npm (v8 or later)
+
+## Setting Up the Development Environment
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Chrisegbaaaibon/techinnover-assessment.git
+   cd  techinnover-assessment
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the `src/config` directory with the following content:
+   ```bash
+   JWT_SECRET=your_jwt_secret
+   MONGO_URI=mongodb://localhost:27017/your_db_name
+   ```
+   Replace `your_jwt_secret` with a secure random string for JWT encryption.
+
+4. Start the development server:
+   ```bash
+   npm run start:dev
+   ```
+The API should now be running on `http://localhost:3000`.
+
+## API Documentation
+Once the server is running, you can access the Swagger API documentation at `http://localhost:3000/api`.
+
+## Project Structure
+```
+src/
+├── common/
+│   ├── decorators/
+│   │   └── get-current-user.decorator.ts
+│   ├── dtos/
+│   │   ├── auth.dto.ts
+│   │   ├── product.dto.ts
+│   │   └── response.dto.ts
+│   ├── guards/
+│   │   └── auth.guard.ts
+│   ├── interfaces/
+│   │   └── http-response.interface.ts
+├── config/
+│   ├── env.config.ts
+│   └── swagger.config.ts
+├── helpers/
+│   ├── enum.helpers.ts
+│   └── index.ts
+├── models/
+│   ├── product.model.ts
+│   └── user.model.ts
+├── modules/
+│   ├── auth/
+│   │   ├── auth.controller.ts
+│   │   ├── auth.module.ts
+│   │   └── auth.service.ts
+│   ├── user/
+│   │   ├── user.controller.ts
+│   │   ├── user.module.ts
+│   │   └── user.service.ts
+│   └── api.module.ts
+├── utils/
+│   ├── token.provider.ts
+├── app.controller.spec.ts
+├── app.controller.ts
+├── app.module.ts
+├── main.ts
 ```
 
-## Running the app
+## Available Scripts
+- `npm run build`: Builds the application.
+- `npm run start`: Starts the application in production mode.
+- `npm run start:dev`: Starts the application in development mode with hot-reload.
+- `npm run test`: Runs the test suite.
+- `npm run lint`: Lints the codebase.
 
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
+This project is licensed under the MIT License.
 
-Nest is [MIT licensed](LICENSE).
+## Contact
+Christopher Egbaaibon - your.email@example.com  
+Project Link: https://github.com/your-username/e-commerce-api
